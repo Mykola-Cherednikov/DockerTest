@@ -1,0 +1,36 @@
+name: Postgres
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  postgres:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 6660:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Wait for Postgres
+        run: pg_isready -h localhost -p 6660
+
+      - name: Test connection
+        run: psql -h localhost -p 6660 -U postgres -d postgres -c "SELECT version();"
+        env:
+          PGPASSWORD: postgres
