@@ -19,4 +19,4 @@ jobs:
         run: docker compose exec postgres pg_isready -U ${{ secrets.DB_USER }}
 
       - name: Test connection
-        run: docker compose exec -e PGPASSWORD=${{ secrets.DB_PASSWORD }} postgres psql -U ${{ secrets.DB_USER }} -d ${{ secrets.DB_NAME }} -c "SELECT version();"
+        run: docker exec -e PGPASSWORD=${{ secrets.DB_PASSWORD }} postgres psql -U ${{ secrets.DB_USER }} -d ${{ secrets.DB_NAME }} -c "SELECT version();"
