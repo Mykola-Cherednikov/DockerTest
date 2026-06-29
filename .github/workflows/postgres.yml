@@ -13,11 +13,11 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Start Postgres via docker compose
-        run: docker compose up -d postgres
-        env:
-          POSTGRES_USER: ${{ secrets.DB_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+        run: |
+          $env:POSTGRES_USER="${{ secrets.DB_USER }}"
+          $env:POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}"
+          $env:POSTGRES_DB="${{ secrets.POSTGRES_DB }}"
+          docker compose up -d postgres
 
       - name: Wait for Postgres
         run: docker compose exec postgres pg_isready -U ${{ secrets.DB_USER }}
