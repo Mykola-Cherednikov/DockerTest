@@ -6,31 +6,17 @@ on:
 
 jobs:
   postgres:
-    runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: ${{ secrets.DB_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.DB_NAME }}
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+    runs-on: self-hosted
 
     steps:
       - name: Check out code
         uses: actions/checkout@v4
 
+      - name: Start Postgres via docker compose
+        run: docker compose up -d postgres
+
       - name: Wait for Postgres
-        run: pg_isready -h localhost -p 5432
+        run: docker compose exec postgres pg_isready -U ${{ secrets.DB_USER }}
 
       - name: Test connection
-        run: psql -h localhost -p 5432 -U ${{ secrets.DB_USER }} -d ${{ secrets.DB_NAME }} -c "SELECT version();"
-        env:
-          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: docker compose exec -e PGPASSWORD=${{ secrets.DB_PASSWORD }} postgres psql -U ${{ secrets.DB_USER }} -d ${{ secrets.DB_NAME }} -c "SELECT version();"
