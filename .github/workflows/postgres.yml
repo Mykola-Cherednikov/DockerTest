@@ -16,7 +16,7 @@ jobs:
         run: docker compose up -d postgres
 
       - name: Wait for Postgres
-        run: docker compose exec postgres pg_isready -U ${{ secrets.DB_USER }}
+        run: docker compose exec postgres pg_isready -U postgres
 
       - name: Test connection
-        run: docker compose exec -e PGPASSWORD=${{ secrets.DB_PASSWORD }} postgres psql -U ${{ secrets.DB_USER }} -d ${{ secrets.DB_NAME }} -c "SELECT version();"
+        run: docker compose exec -e PGPASSWORD=postgres postgres psql -U postgres -d postgres -c "SELECT version();"
