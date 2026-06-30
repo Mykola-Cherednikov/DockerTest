@@ -6,7 +6,12 @@ on:
 
 jobs:
   postgres:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
+
+    env:
+      DB_USER: ${{ secrets.DB_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
 
     steps:
       - name: Check out code
